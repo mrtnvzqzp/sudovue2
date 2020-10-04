@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Sudoku</h3>
-    <form class="inboard" @submit.prevent="testing">
+    <form class="inboard" @submit.prevent="solve">
       <table border = "1">
         
          <tr>
@@ -107,7 +107,8 @@
       </table>
       <button>Submit</button>
    </form>
-   {{ this.tt }}
+   {{this.tt}}
+
    {{ makeboard }}
 
 
@@ -216,7 +217,11 @@ export default {
         i98: "0",
         i99: "0",
 
-        tt: "hi"
+        tt: "hi",
+        c: [],
+        ss: [], 
+        go: [],
+        trials: []
 
         
     }
@@ -254,23 +259,26 @@ export default {
       for (var i = 0; i < 9; i++) {
          for (var j = 0; j < 9; j++) {
             if (this.makeboard[i][j] == 0){
+               this.c.push([i,j])
                return [i,j]
             }
          }
       }
     },
       isValid(coor, t) {
+         this.ss.push(t)
          var k
          for (k = 0; k < 9; k++){
             if (this.makeboard[coor[0]][k] == t){
-               this.tt = "no"
+               this.go.push("no")
                return false
             }
 
          }
          for (k = 0; k < 9; k++){
             if (this.makeboard[k][coor[1]] == t){
-               this.tt = "no"
+               this.go.push("no")
+           
                return false
             }
 
@@ -281,14 +289,40 @@ export default {
          for (var u = boxi; u < boxi + 3; u++) {
          for (var v = boxj; v < boxj + 3; v++) {
             if (this.makeboard[u][v] == t){
-               this.tt = "no"
+               this.go.push("no")
+               
                return false
             }
          }
       }
-      this.tt = "t"
+      this.go.push("yes")
+     
       return true
 
+      },
+      solve(){
+         var coor = this.findEmpty() 
+         if(!coor){
+            this.tt = "done"
+            return true
+         }
+         for (var s = 1; s < 10; s++){
+            
+            if(this.isValid(coor, s)){
+               this.trials.push("pass")
+               
+               this.makeboard[coor[0]][coor[1]] = s
+               if(this.solve()){
+                  return true
+               }
+
+               this.makeboard[coor[0]][coor[1]] = 0
+            }
+            
+            
+
+         }
+         return false
       }
     }
 
