@@ -1,7 +1,7 @@
 <template>
   <div>
     <h3>Sudoku</h3>
-    <form class="inboard">
+    <form class="inboard" @submit.prevent="testing">
       <table border = "1">
         
          <tr>
@@ -107,6 +107,7 @@
       </table>
       <button>Submit</button>
    </form>
+   {{ this.tt }}
    {{ makeboard }}
 
 
@@ -213,7 +214,9 @@ export default {
         i96: "0",
         i97: "0",
         i98: "0",
-        i99: "0"
+        i99: "0",
+
+        tt: "hi"
 
         
     }
@@ -243,17 +246,50 @@ export default {
     methods: {
       testing() {
       
-      this.i22 = 19
+      var coor = this.findEmpty() 
+      this.isValid(coor, 9)
+      
     },
-    findEmpty(makeboard) {
+    findEmpty() {
       for (var i = 0; i < 9; i++) {
          for (var j = 0; j < 9; j++) {
-            if (makeboard[i][j] == 0){
+            if (this.makeboard[i][j] == 0){
                return [i,j]
             }
          }
       }
-    }
+    },
+      isValid(coor, t) {
+         var k
+         for (k = 0; k < 9; k++){
+            if (this.makeboard[coor[0]][k] == t){
+               this.tt = "no"
+               return false
+            }
+
+         }
+         for (k = 0; k < 9; k++){
+            if (this.makeboard[k][coor[1]] == t){
+               this.tt = "no"
+               return false
+            }
+
+         }
+         var boxi = (coor[0] - (coor[0] % 3)) 
+         var boxj = (coor[1] - (coor[1] % 3))
+
+         for (var u = boxi; u < boxi + 3; u++) {
+         for (var v = boxj; v < boxj + 3; v++) {
+            if (this.makeboard[u][v] == t){
+               this.tt = "no"
+               return false
+            }
+         }
+      }
+      this.tt = "t"
+      return true
+
+      }
     }
 
 
